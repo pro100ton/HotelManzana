@@ -7,7 +7,20 @@
 
 import UIKit
 
-class RegistrationTableViewController: UITableViewController {
+class RegistrationTableViewController: UITableViewController, AddRegistrationViewControllerDelegate {
+    func addRegistrationViewController(_ controller: AddRegistrationTableViewController, didSave registration: Registration)
+    {
+        if let indexPath = tableView.indexPathForSelectedRow {
+            registraions.remove(at: indexPath.row)
+            registraions.insert(registration, at: indexPath.row)
+        } else {
+            registraions.append(registration)
+        }
+        
+        tableView.reloadData()
+        dismiss(animated: true, completion: nil)
+    }
+    
     
     // MARK: Properties
     var registraions: [Registration] = []
@@ -103,20 +116,25 @@ class RegistrationTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    
-    
-    @IBSegueAction func viewRegistration(_ coder: NSCoder, sender: Any?) -> AddRegistrationTableViewController? {
-        if let cell = sender as? UITableViewCell,
-           let indexPath = tableView.indexPath(for: cell) {
-            let roomToEdit = registraions[indexPath.row]
-            print("-----\n\n\n")
-            print(roomToEdit)
-            return AddRegistrationTableViewController(coder: coder, registration: roomToEdit)
-        } else {
-            print("-----\n\n\n")
-            return AddRegistrationTableViewController(coder: coder, registration: nil)
+    @IBSegueAction func viewRegistrationDetails(_ coder: NSCoder, sender: Any?) -> AddRegistrationTableViewController? {
+        let detailViewController = AddRegistrationTableViewController(coder: coder)
+        detailViewController?.delegate = self
+        
+        guard
+            let cell = sender as? UITableViewCell,
+            let indexPath = tableView.indexPath(for: cell)
+        else {
+            print("----Empty data----")
+            return detailViewController
         }
+        print("----Get registration----")
+        
+        let registration = registraions[indexPath.row]
+        print("----Registration----")
+        print(registration)
+        detailViewController?.initialRegistration = registration
+        
+        return detailViewController
     }
-    
     
 }

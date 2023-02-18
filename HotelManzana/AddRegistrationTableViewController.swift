@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol AddRegistrationViewControllerDelegate: AnyObject {
+    func addRegistrationViewController(_ controller: AddRegistrationTableViewController, didSave registration: Registration)
+}
+
 class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeTableViewControllerDelegate {
     
     // MARK: Implementing necessary delegate methods
@@ -18,6 +22,7 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
     
     // MARK: Properties
     
+    weak var delegate: AddRegistrationViewControllerDelegate?
     var roomType: RoomType?
     var initialRegistration: Registration?
     
@@ -84,21 +89,21 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
             firstNameTextField.text = initialRegistration?.firstName
             lastNameTextField.text = initialRegistration?.lastName
             emailTextField.text = initialRegistration?.emailAddress
-            
+
             checInDatePicker.date = initialRegistration!.checkInDate
             checkOutDatePicker.date = initialRegistration!.checkInDate
             checkInDateLabel.text = initialRegistration?.checkInDate.formatted(date: .abbreviated, time: .omitted)
             checkOutDateLabel.text = initialRegistration?.checkOutDate.formatted(date: .abbreviated, time: .omitted)
-            
+
             numberOfAdultsLabel.text = String(initialRegistration!.numberOfAdults)
             numberOfChildrenLabel.text = String(initialRegistration!.numberOfChildren)
             numberOfAdultsStepper.value = Double(initialRegistration!.numberOfAdults)
             numberOfChildrenStepper.value = Double(initialRegistration!.numberOfChildren)
-            
+
             wifiSwitch.isOn = initialRegistration!.wifi
-            
+
             roomType = initialRegistration?.roomType
-            
+
         } else {
             checInDatePicker.date = todayDate
             checInDatePicker.minimumDate = todayDate
@@ -106,6 +111,10 @@ class AddRegistrationTableViewController: UITableViewController, SelectRoomTypeT
             checkOutDateLabel.text = todayDate.formatted(date: .abbreviated, time: .omitted)
         }
         
+        checInDatePicker.date = todayDate
+        checInDatePicker.minimumDate = todayDate
+        checkInDateLabel.text = todayDate.formatted(date: .abbreviated, time: .omitted)
+        checkOutDateLabel.text = todayDate.formatted(date: .abbreviated, time: .omitted)
         
         updateDateViews()
         updateNumberOfGuests()
